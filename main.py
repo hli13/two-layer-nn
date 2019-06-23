@@ -21,7 +21,7 @@ params = nn_utils.parse_params()
 print("\nStart training")
 print("---------------")
 time_start = time.time()
-nn_utils.nn_train(model, model_grads, params, mnist)
+model = nn_utils.nn_train(model, model_grads, params, mnist)
 time_end = time.time()
 print("Training Time : %8.4f (s)" % ( time_end-time_start ) )
 

@@ -5,6 +5,7 @@ Functions for training and evaluating a neural network on the MNIST dataset
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 import h5py
 import argparse
 import copy
@@ -34,8 +35,8 @@ def load_mnist(mnist_dir):
     mnist['y_test'] = np.int32( np.array( MNIST_data['y_test'][:,0] ) )
     MNIST_data.close()
     
-    mnist['n_train'] = mnist['x_train'].shape[0]
-    mnist['n_test'] = mnist['x_test'].shape[0]
+    mnist['n_train'] = mnist['x_train'].shape[0] # 60000
+    mnist['n_test'] = mnist['x_test'].shape[0] # 10000
     mnist['n_input'] = mnist['x_train'].shape[1] # image size 28*28=784
     mnist['n_output'] = len(np.unique(mnist['y_test'])) # num of labels = 10
     
@@ -71,8 +72,8 @@ def parse_params():
                         help='staircase interval for learning rate decay (default: 5')
     parser.add_argument('--n_epochs', type=int, default=20,
                         help='number of epochs to train (default: 20)')
-    parser.add_argument('--n_h', type=int, default=32,
-                        help='number of hidden units (default: 32)')
+    parser.add_argument('--n_h', type=int, default=64,
+                        help='number of hidden units (default: 64)')
     parser.add_argument('--sigma', type=str, default='sigmoid',
                         help='type of activation function (default: sigmoid)')
     params = parser.parse_args()
@@ -250,6 +251,30 @@ def backprop(x, y, f, Z, H, model, model_grads, func):
     model_grads['b2'] = db2        
     return model_grads
 
+def plot_predict(x, y, pred):
+    """
+    Plot and display the test figure and prediction
+    
+    Parameters
+    ----------
+    x : ndarray of float
+        input
+    y : ndarray of int
+        ground truth label
+    pred : ndarray of int
+        predicted label
+        
+    Returns
+    -------
+    None
+    """
+    plt.figure()
+    x = x.reshape(28,28)
+    plt.gray()
+    plt.title("Truth: %d    Predict: %d" % (y, pred))
+    plt.imshow(x)
+    
+
 def nn_train(model, model_grads, params, mnist):
     """
     Training the model with stochastic gradient descent
@@ -342,6 +367,11 @@ def nn_test(model, params, mnist):
         # check prediction accuracy
         if (prediction == y):
             total_correct += 1
+        
+        # display the first k predictions
+        k = 5
+        if (n < k):
+            plot_predict(x, y, prediction)
             
     print("Test Accuracy : %6.4f" % 
           ( total_correct/np.float(mnist['n_test']) ) )
