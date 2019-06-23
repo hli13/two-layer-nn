@@ -375,7 +375,7 @@ def nn_test(model, params, mnist):
                 plot_predict(x, y, prediction)
                 count_correct += 1
         
-        # display the first k incorrect prediction
+        # display the first k incorrect predictions
         if (prediction != y and count_wrong < k):
             plot_predict(x, y, prediction)
             count_wrong += 1
