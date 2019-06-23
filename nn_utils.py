@@ -6,6 +6,7 @@ Functions for training and evaluating a neural network on the MNIST dataset
 
 import numpy as np
 import h5py
+import argparse
 import sys
 
 def load_mnist(mnist_dir):
@@ -45,6 +46,46 @@ def load_mnist(mnist_dir):
     print("Output data shape : %d" % mnist['n_output'])
     
     return mnist
+
+def parse_params():
+    """
+    Parse the arguments/hyperparameters
+    
+    Parameters
+    ----------
+    None
+        
+    Returns
+    -------
+    params : argparse.Namespace
+        hyperparameters
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--lr', type=float, default=0.1, 
+                        help='initial learning rate (default: 0.1)')
+    parser.add_argument('--decay', type=float, default=0.1, 
+                        help='learning rate decay (default: 0.1)')
+    parser.add_argument('--interval', type=int, default=5, 
+                        help='staircase interval for learning rate decay (default: 5')
+    parser.add_argument('--n_epochs', type=int, default=20,
+                        help='number of epochs to train (default: 20)')
+    parser.add_argument('--n_h', type=int, default=32,
+                        help='number of hidden units (default: 32)')
+    parser.add_argument('--sigma', type=str, default='sigmoid',
+                        help='type of activation function (default: sigmoid)')
+    params = parser.parse_args()
+    
+    # print hyperparameters for training
+    print("\nHyperparameters")
+    print("-----------------")
+    print("Initial learning rate : %6.4f" % params.lr)
+    print("Learning rate decay : %6.4f" % params.decay)
+    print("Staircase learning rate decay interval : %d" % params.interval)
+    print("Number of epochs : %d" % params.n_epochs)
+    print("Number of hidden units : %d" % params.n_h)
+    print("Activation function : %s" % params.sigma)
+
+    return params
 
 def sigma(z, func):
     """

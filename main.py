@@ -8,62 +8,22 @@ import numpy as np
 from random import randint
 import time
 import copy
-import argparse
 import nn_utils
 
 # load the MNIST dataset
 mnist_dir = './MNISTdata.hdf5'
 mnist = nn_utils.load_mnist(mnist_dir)
 
-# parse the arguments
-parser = argparse.ArgumentParser()
-
-# hyperparameters
-parser.add_argument('--lr', type=float, default=0.1, 
-                    help='initial learning rate (default: 0.1)')
-parser.add_argument('--decay', type=float, default=0.1, 
-                    help='learning rate decay (default: 0.1)')
-parser.add_argument('--interval', type=int, default=5, 
-                    help='staircase interval for learning rate decay (default: 5')
-parser.add_argument('--n_epochs', type=int, default=20,
-                    help='number of epochs to train (default: 20)')
-parser.add_argument('--n_h', type=int, default=32,
-                    help='number of hidden units (default: 32)')
-parser.add_argument('--sigma', type=str, default='sigmoid',
-                    help='type of activation function (default: sigmoid)')
-
-params = parser.parse_args()
-
-# number of inputs
-num_inputs = mnist['n_input']
-# number of outputs
-num_outputs = mnist['n_output']
-# number of hidden units
-num_hidden = params.n_h
-# activation function type
-func = params.sigma
-# initial learning rate
-LR = params.lr
-# length of training
-num_epochs = params.n_epochs
+# parse arguments/hyperparameters
+params = nn_utils.parse_params()
 
 # initialization
 model = {}
-model['W'] = np.random.randn(num_hidden,num_inputs) / np.sqrt(num_inputs)
-model['C'] = np.random.randn(num_outputs,num_hidden) / np.sqrt(num_hidden)
-model['b1'] = np.random.randn(num_hidden) / np.sqrt(num_hidden)
-model['b2'] = np.random.randn(num_outputs) / np.sqrt(num_outputs)
+model['W'] = np.random.randn(params.n_h,mnist['n_input']) / np.sqrt(mnist['n_input'])
+model['C'] = np.random.randn(mnist['n_output'],params.n_h) / np.sqrt(params.n_h)
+model['b1'] = np.random.randn(params.n_h) / np.sqrt(params.n_h)
+model['b2'] = np.random.randn(mnist['n_output']) / np.sqrt(mnist['n_output'])
 model_grads = copy.deepcopy(model)
-
-# print hyperparameters for training
-print("\nHyperparameters")
-print("-----------------")
-print("Initial learning rate : %6.4f" % LR)
-print("Learning rate decay : %6.4f" % params.decay)
-print("Staircase learning rate decay interval : %d" % params.interval)
-print("Number of epochs : %d" % num_epochs)
-print("Number of hidden units : %d" % num_hidden)
-print("Activation function : %s" % func)
 
 # training the model
 print("\nStart training")
@@ -71,7 +31,10 @@ print("---------------")
 
 time_start = time.time()
 
-for epochs in range(num_epochs):
+# initial learning rate
+LR = params.lr
+
+for epochs in range(params.n_epochs):
     
     # learning rate schedule: staircase decay
     if (epochs > 0 and epochs % params.interval == 0):
@@ -87,7 +50,7 @@ for epochs in range(num_epochs):
         x = mnist['x_train'][n_random][:]
         
         # forward step
-        (Z, H, f) = nn_utils.forward(x, model, func)
+        (Z, H, f) = nn_utils.forward(x, model, params.sigma)
         
         # check prediction accuracy
         prediction = np.argmax(f)
@@ -95,7 +58,7 @@ for epochs in range(num_epochs):
             total_correct += 1
         
         # backpropagation step
-        model_grads = nn_utils.backprop(x, y, f, Z, H, model, model_grads, func)
+        model_grads = nn_utils.backprop(x, y, f, Z, H, model, model_grads, params.sigma)
         
         # update model parameters
         model['W'] = model['W'] + LR*model_grads['W']
@@ -121,7 +84,7 @@ for n in range( mnist['n_test']):
     x = mnist['x_test'][n][:]
     
     # forward step and prediction
-    (_, _, f) = nn_utils.forward(x, model, func)
+    (_, _, f) = nn_utils.forward(x, model, params.sigma)
     prediction = np.argmax(f)
     
     # check prediction accuracy
