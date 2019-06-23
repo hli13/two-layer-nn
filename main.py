@@ -5,28 +5,23 @@ Pipeline for training and evaluating a neural network on the MNIST dataset
 """
 
 import numpy as np
-import h5py
+from random import randint
 import time
 import copy
-from random import randint
 
 import nn_utils
 
 # load MNIST data
-MNIST_data = h5py.File('MNISTdata.hdf5', 'r')
-x_train = np.float32(MNIST_data['x_train'][:] )
-y_train = np.int32(np.array(MNIST_data['y_train'][:,0]))
-x_test = np.float32( MNIST_data['x_test'][:] )
-y_test = np.int32( np.array( MNIST_data['y_test'][:,0] ) )
-MNIST_data.close()
+mnist_dir = './MNISTdata.hdf5'
+mnist = nn_utils.load_mnist(mnist_dir)
 
 ####################################################################################
 # Implementation of stochastic gradient descent algorithm for nerual networks
 
 # number of inputs
-num_inputs = 28*28
+num_inputs = mnist['n_input']
 # number of outputs
-num_outputs = 10
+num_outputs = mnist['n_output']
 # number of hidden units
 num_hidden = 50
 # nonlinearity type
@@ -46,6 +41,9 @@ time1 = time.time()
 LR = .01
 num_epochs = 20
 
+print("\nStart training")
+print("---------------")
+
 for epochs in range(num_epochs):
     
     #Learning rate schedule
@@ -58,11 +56,11 @@ for epochs in range(num_epochs):
         
     total_correct = 0
     
-    for n in range( len(x_train)):
+    for n in range( mnist['n_train']):
         # randomly select a new data sample
-        n_random = randint(0,len(x_train)-1 )
-        y = y_train[n_random]
-        x = x_train[n_random][:]
+        n_random = randint(0,mnist['n_train']-1 )
+        y = mnist['y_train'][n_random]
+        x = mnist['x_train'][n_random][:]
         
         # forward step
         (Z, H, f) = nn_utils.forward(x, model, func)
@@ -81,19 +79,21 @@ for epochs in range(num_epochs):
         model['b1'] = model['b1'] + LR*model_grads['b1']
         model['b2'] = model['b2'] + LR*model_grads['b2']
         
-    print("Epoch # %3d,  Accuracy %8.4f" % ( epochs, total_correct/np.float(len(x_train) ) ) )
+    print("Epoch # %3d,  Accuracy %8.4f" % ( epochs, total_correct/np.float(mnist['n_train'] ) ) )
 
 time2 = time.time()
 print("Training Time: %8.4f (s)" % ( time2-time1 ) )
 
 ######################################################
 # test data
+print("\nStart testing")
+print("--------------")
 total_correct = 0
-for n in range( len(x_test)):
-    y = y_test[n]
-    x = x_test[n][:]
+for n in range( mnist['n_test']):
+    y = mnist['y_test'][n]
+    x = mnist['x_test'][n][:]
     (_, _, f) = nn_utils.forward(x, model, func)
     prediction = np.argmax(f)
     if (prediction == y):
         total_correct += 1
-print("Test Accuracy %8.4f" % ( total_correct/np.float(len(x_test) ) ) )
+print("Test Accuracy %8.4f" % ( total_correct/np.float(mnist['n_test']) ) )
