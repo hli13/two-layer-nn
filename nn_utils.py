@@ -8,6 +8,7 @@ import numpy as np
 import h5py
 import argparse
 import copy
+from random import randint
 import sys
 
 def load_mnist(mnist_dir):
@@ -68,7 +69,7 @@ def parse_params():
                         help='learning rate decay (default: 0.1)')
     parser.add_argument('--interval', type=int, default=5, 
                         help='staircase interval for learning rate decay (default: 5')
-    parser.add_argument('--n_epochs', type=int, default=2,
+    parser.add_argument('--n_epochs', type=int, default=20,
                         help='number of epochs to train (default: 20)')
     parser.add_argument('--n_h', type=int, default=32,
                         help='number of hidden units (default: 32)')
@@ -248,3 +249,99 @@ def backprop(x, y, f, Z, H, model, model_grads, func):
     model_grads['b1'] = db1
     model_grads['b2'] = db2        
     return model_grads
+
+def nn_train(model, model_grads, params, mnist):
+    """
+    Training the model with stochastic gradient descent
+    
+    Parameters
+    ----------
+    model : dict
+        parameters/weights of the nerual network
+    model_grads : dict
+        gradients of the parameters/weights of the nerual network
+    params : argparse.Namespace
+        comtains hyperparameters for training
+    mnist : dict
+        contains mnist training and test data
+        
+    Returns
+    -------
+    model : dict
+        updated parameters/weights of the nerual network
+    """
+    # initial learning rate
+    LR = params.lr
+    
+    for epochs in range(params.n_epochs):
+        
+        # learning rate schedule: staircase decay
+        if (epochs > 0 and epochs % params.interval == 0):
+            LR *= params.decay
+            
+        total_correct = 0
+        
+        for n in range( mnist['n_train']):
+            
+            # randomly select a new data sample
+            n_random = randint(0,mnist['n_train']-1 )
+            y = mnist['y_train'][n_random]
+            x = mnist['x_train'][n_random][:]
+            
+            # forward step
+            (Z, H, f) = forward(x, model, params.sigma)
+            
+            # check prediction accuracy
+            prediction = np.argmax(f)
+            if (prediction == y):
+                total_correct += 1
+            
+            # backpropagation step
+            model_grads = backprop(x, y, f, Z, H, model, model_grads, params.sigma)
+            
+            # update model parameters
+            model['W'] = model['W'] + LR*model_grads['W']
+            model['C'] = model['C'] + LR*model_grads['C']
+            model['b1'] = model['b1'] + LR*model_grads['b1']
+            model['b2'] = model['b2'] + LR*model_grads['b2']
+            
+        print("Epoch %3d,  Accuracy %6.4f" % 
+              ( epochs, total_correct/np.float(mnist['n_train'] ) ) )
+        
+    return model
+
+def nn_test(model, params, mnist):
+    """
+    Testing the model
+    
+    Parameters
+    ----------
+    model : dict
+        parameters/weights of the nerual network
+    params : argparse.Namespace
+        comtains hyperparameters for training
+    mnist : dict
+        contains mnist training and test data
+        
+    Returns
+    -------
+    None
+    """
+    total_correct = 0
+    
+    for n in range( mnist['n_test']):
+        
+        # load test data sample
+        y = mnist['y_test'][n]
+        x = mnist['x_test'][n][:]
+        
+        # forward step and prediction
+        (_, _, f) = forward(x, model, params.sigma)
+        prediction = np.argmax(f)
+        
+        # check prediction accuracy
+        if (prediction == y):
+            total_correct += 1
+            
+    print("Test Accuracy : %6.4f" % 
+          ( total_correct/np.float(mnist['n_test']) ) )
