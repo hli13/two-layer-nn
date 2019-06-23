@@ -1,13 +1,16 @@
-# -*- coding: utf-8 -*-
+"""
+Pipeline for training and evaluating a neural network on the MNIST dataset
+
+@author: Haoyang (Ryan) Li
+"""
 
 import numpy as np
 import h5py
 import time
 import copy
 from random import randint
-#import sys
 
-from nn_utils import *
+import nn_utils
 
 # load MNIST data
 MNIST_data = h5py.File('MNISTdata.hdf5', 'r')
@@ -28,7 +31,7 @@ num_outputs = 10
 num_hidden = 50
 # nonlinearity type
 #func = 'tanh'
-func = 'sigmoidal'
+func = 'sigmoid'
 
 # initialization
 model = {}
@@ -62,7 +65,7 @@ for epochs in range(num_epochs):
         x = x_train[n_random][:]
         
         # forward step
-        (Z, H, f) = forward(x, y, model, func)
+        (Z, H, f) = nn_utils.forward(x, model, func)
         
         # check the prediction accuracy
         prediction = np.argmax(f)
@@ -70,7 +73,7 @@ for epochs in range(num_epochs):
             total_correct += 1
         
         # backward step
-        model_grads = backward(x, y, f, Z, H, model, model_grads, func)
+        model_grads = nn_utils.backprop(x, y, f, Z, H, model, model_grads, func)
         
         # update parameters
         model['W'] = model['W'] + LR*model_grads['W']
@@ -89,7 +92,7 @@ total_correct = 0
 for n in range( len(x_test)):
     y = y_test[n]
     x = x_test[n][:]
-    (_, _, f) = forward(x, y, model, func)
+    (_, _, f) = nn_utils.forward(x, model, func)
     prediction = np.argmax(f)
     if (prediction == y):
         total_correct += 1
