@@ -70,7 +70,7 @@ def parse_params():
                         help='learning rate decay (default: 0.1)')
     parser.add_argument('--interval', type=int, default=5, 
                         help='staircase interval for learning rate decay (default: 5')
-    parser.add_argument('--n_epochs', type=int, default=20,
+    parser.add_argument('--n_epochs', type=int, default=1,
                         help='number of epochs to train (default: 20)')
     parser.add_argument('--n_h', type=int, default=64,
                         help='number of hidden units (default: 64)')
@@ -353,6 +353,9 @@ def nn_test(model, params, mnist):
     None
     """
     total_correct = 0
+    count_correct = 0
+    count_wrong = 0
+    k = 5
     
     for n in range( mnist['n_test']):
         
@@ -367,11 +370,15 @@ def nn_test(model, params, mnist):
         # check prediction accuracy
         if (prediction == y):
             total_correct += 1
+            # display the first k correct predictions
+            if (count_correct < k):
+                plot_predict(x, y, prediction)
+                count_correct += 1
         
-        # display the first k predictions
-        k = 5
-        if (n < k):
+        # display the first k incorrect prediction
+        if (prediction != y and count_wrong < k):
             plot_predict(x, y, prediction)
+            count_wrong += 1
             
     print("Test Accuracy : %6.4f" % 
           ( total_correct/np.float(mnist['n_test']) ) )
