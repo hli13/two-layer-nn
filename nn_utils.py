@@ -39,10 +39,10 @@ def load_mnist(mnist_dir):
     # print data info
     print("\nMNIST data info")
     print("----------------")
-    print("Number of training data: %d" % mnist['n_train'])
-    print("Number of test data: %d"  % mnist['n_test'])
-    print("Input data shape: %d" % mnist['n_input'])
-    print("Output data shape: %d" % mnist['n_output'])
+    print("Number of training data : %d" % mnist['n_train'])
+    print("Number of test data : %d"  % mnist['n_test'])
+    print("Input data shape : %d" % mnist['n_input'])
+    print("Output data shape : %d" % mnist['n_output'])
     
     return mnist
 
