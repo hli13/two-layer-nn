@@ -7,6 +7,7 @@ Functions for training and evaluating a neural network on the MNIST dataset
 import numpy as np
 import h5py
 import argparse
+import copy
 import sys
 
 def load_mnist(mnist_dir):
@@ -67,7 +68,7 @@ def parse_params():
                         help='learning rate decay (default: 0.1)')
     parser.add_argument('--interval', type=int, default=5, 
                         help='staircase interval for learning rate decay (default: 5')
-    parser.add_argument('--n_epochs', type=int, default=20,
+    parser.add_argument('--n_epochs', type=int, default=2,
                         help='number of epochs to train (default: 20)')
     parser.add_argument('--n_h', type=int, default=32,
                         help='number of hidden units (default: 32)')
@@ -86,6 +87,32 @@ def parse_params():
     print("Activation function : %s" % params.sigma)
 
     return params
+
+def init_model(mnist, params):
+    """
+    Initialize neural network model
+    
+    Parameters
+    ----------
+    mnist : dict
+        contains mnist training and test data
+    params : argparse.Namespace
+        comtains hyperparameters for training
+        
+    Returns
+    -------
+    model : dict
+        parameters/weights of the nerual network
+    model_grads : dict
+        gradients of the parameters/weights of the nerual network
+    """
+    model = {}
+    model['W'] = np.random.randn(params.n_h,mnist['n_input']) / np.sqrt(mnist['n_input'])
+    model['C'] = np.random.randn(mnist['n_output'],params.n_h) / np.sqrt(params.n_h)
+    model['b1'] = np.random.randn(params.n_h) / np.sqrt(params.n_h)
+    model['b2'] = np.random.randn(mnist['n_output']) / np.sqrt(mnist['n_output'])
+    model_grads = copy.deepcopy(model)
+    return (model, model_grads)
 
 def sigma(z, func):
     """
@@ -199,14 +226,14 @@ def backprop(x, y, f, Z, H, model, model_grads, func):
     model : dict
         parameters/weights of the nerual network
     model_grads : dict
-        Gradients of the parameters/weights of the nerual network
+        gradients of the parameters/weights of the nerual network
     func : str
         the type of activation
         
     Returns
     -------
     model_grads : dict
-        Updated gradients of the parameters/weights of the nerual network
+        updated gradients of the parameters/weights of the nerual network
     """
     dU = - 1.0*f
     dU[y] = dU[y] + 1.0

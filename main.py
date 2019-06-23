@@ -7,7 +7,6 @@ Pipeline for training and evaluating a neural network on the MNIST dataset
 import numpy as np
 from random import randint
 import time
-import copy
 import nn_utils
 
 # load the MNIST dataset
@@ -18,12 +17,7 @@ mnist = nn_utils.load_mnist(mnist_dir)
 params = nn_utils.parse_params()
 
 # initialization
-model = {}
-model['W'] = np.random.randn(params.n_h,mnist['n_input']) / np.sqrt(mnist['n_input'])
-model['C'] = np.random.randn(mnist['n_output'],params.n_h) / np.sqrt(params.n_h)
-model['b1'] = np.random.randn(params.n_h) / np.sqrt(params.n_h)
-model['b2'] = np.random.randn(mnist['n_output']) / np.sqrt(mnist['n_output'])
-model_grads = copy.deepcopy(model)
+(model, model_grads) = nn_utils.init_model(mnist,params)
 
 # training the model
 print("\nStart training")
