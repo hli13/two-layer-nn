@@ -190,6 +190,10 @@ Run the following script to make sure required packages are installed.
 ```
 pip install -r requirements.txt
 ```
+To run a quick test of the pipeline with a small network (8 hidden units) and a small number of training steps (1 epoch)
+```
+python main.py --quicktest
+```
 To run the model with the default hyperparameters
 ```
 python main.py

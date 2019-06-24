@@ -76,7 +76,15 @@ def parse_params():
                         help='number of hidden units (default: 64)')
     parser.add_argument('--sigma', type=str, default='sigmoid',
                         help='type of activation function (default: sigmoid)')
+    parser.add_argument('--quicktest', type=bool, default=False,
+                        help='whether or not to perform a quick test of the \
+                        pipeline (default: false)')
     params = parser.parse_args()
+    
+    # modify parameters for a quick test
+    if (params.quicktest == True):
+        params.n_epochs = 1
+        params.n_h = 8
     
     # print hyperparameters for training
     print("\nHyperparameters")
@@ -274,6 +282,7 @@ def plot_predict(x, y, pred):
     plt.axis('off')
     plt.title("Truth: %d    Predict: %d" % (y, pred))
     plt.imshow(x)
+    plt.show()
     
 
 def nn_train(model, model_grads, params, mnist):
@@ -372,12 +381,12 @@ def nn_test(model, params, mnist):
         if (prediction == y):
             total_correct += 1
             # display the first k correct predictions
-            if (count_correct < k):
+            if (count_correct < k and params.quicktest == False):
                 plot_predict(x, y, prediction)
                 count_correct += 1
         
         # display the first k incorrect predictions
-        if (prediction != y and count_wrong < k):
+        if (prediction != y and count_wrong < k and params.quicktest == False):
             plot_predict(x, y, prediction)
             count_wrong += 1
             
