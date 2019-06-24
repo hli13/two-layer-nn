@@ -7,12 +7,12 @@ Pipeline for training and evaluating a neural network on the MNIST dataset
 import time
 import nn_utils
 
+# parse arguments/hyperparameters
+params = nn_utils.parse_params()
+
 # load the MNIST dataset
 mnist_dir = './MNISTdata.hdf5'
 mnist = nn_utils.load_mnist(mnist_dir)
-
-# parse arguments/hyperparameters
-params = nn_utils.parse_params()
 
 # initialization
 (model, model_grads) = nn_utils.init_model(mnist,params)
