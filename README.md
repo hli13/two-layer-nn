@@ -259,16 +259,16 @@ Test Accuracy : 0.9753
 
 Examples of correctly predicted images
 
-![correct_1](./figs/correct_1.png)
-![correct_2](./figs/correct_2.png)
-![correct_3](./figs/correct_3.png)
-![correct_4](./figs/correct_4.png)
-![correct_5](./figs/correct_5.png)
+![img_correct_1](./figs/correct_1.png)
+![img_correct_2](./figs/correct_2.png)
+![img_correct_3](./figs/correct_3.png)
+![img_correct_4](./figs/correct_4.png)
+![img_correct_5](./figs/correct_5.png)
 
 Examples of *incorrectly* predicted images
 
-![incorrect_1](./figs/incorrect_1.png)
-![incorrect_2](./figs/incorrect_2.png)
-![incorrect_3](./figs/incorrect_3.png)
-![incorrect_4](./figs/incorrect_4.png)
-![incorrect_5](./figs/incorrect_5.png)
+![img_incorrect_1](./figs/incorrect_1.png)
+![img_incorrect_2](./figs/incorrect_2.png)
+![img_incorrect_3](./figs/incorrect_3.png)
+![img_incorrect_4](./figs/incorrect_4.png)
+![img_incorrect_5](./figs/incorrect_5.png)
