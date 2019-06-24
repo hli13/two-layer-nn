@@ -1,6 +1,6 @@
-# A Two-Layer Neural Network
+# A Neural Network with One Hidden Layer
 
-In this project, a two-layer neural network is implemented from scratch in Python. The model is trained using stocastic gradient descent (SGD) and evaluated on the MNIST dataset.
+In this project, a neural network ith one hidden layer is implemented from scratch in Python. The model is trained using stocastic gradient descent (SGD) and evaluated on the MNIST dataset.
 
 ## Dependencies
 
@@ -96,7 +96,7 @@ def softmax_function(z):
 ```python
 def forward(x, model, func):
     """
-    Forward propagation of a two-layer neural network
+    Forward propagation of the neural network
 
     Parameters
     ----------
@@ -127,7 +127,7 @@ def forward(x, model, func):
 ```python
 def backprop(x, y, f, Z, H, model, model_grads, func):
     """
-    Backpropagation of a two-layer neural network
+    Backpropagation of the neural network
 
     Parameters
     ----------

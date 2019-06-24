@@ -191,7 +191,7 @@ def softmax_function(z):
 
 def forward(x, model, func):
     """
-    Forward propagation of a two-layer neural network
+    Forward propagation of the neural network
     
     Parameters
     ----------
@@ -219,7 +219,7 @@ def forward(x, model, func):
 
 def backprop(x, y, f, Z, H, model, model_grads, func):
     """
-    Backpropagation of a two-layer neural network
+    Backpropagation of the neural network
     
     Parameters
     ----------
