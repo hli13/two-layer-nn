@@ -76,9 +76,6 @@ def parse_params():
                         help='number of hidden units (default: 64)')
     parser.add_argument('--sigma', type=str, default='sigmoid',
                         help='type of activation function (default: sigmoid)')
-#    parser.add_argument('--quicktest', type=bool, default=False,
-#                        help='whether or not to perform a quick test of the \
-#                        pipeline (default: false)')
     parser.add_argument('--quicktest', action='store_true',
                         help='perform a quick test of the pipeline')
     params = parser.parse_args()
