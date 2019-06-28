@@ -7,8 +7,8 @@ Pipeline for training and evaluating a neural network on the MNIST dataset
 import time
 import nn_utils
 
-def main():
 
+def main():
     # parse arguments/hyperparameters
     params = nn_utils.parse_params()
     
@@ -31,6 +31,7 @@ def main():
     print("\nStart testing")
     print("--------------")
     nn_utils.nn_test(model, params, mnist)
-    
+
+ 
 if __name__ == "__main__":
     main()

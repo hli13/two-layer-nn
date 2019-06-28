@@ -12,6 +12,7 @@ import copy
 from random import randint
 import sys
 
+
 def load_mnist(mnist_dir):
     """
     Load the MNIST dataset
@@ -35,20 +36,33 @@ def load_mnist(mnist_dir):
     mnist['y_test'] = np.int32( np.array( MNIST_data['y_test'][:,0] ) )
     MNIST_data.close()
     
-    mnist['n_train'] = mnist['x_train'].shape[0] # 60000
-    mnist['n_test'] = mnist['x_test'].shape[0] # 10000
-    mnist['n_input'] = mnist['x_train'].shape[1] # image size 28*28=784
-    mnist['n_output'] = len(np.unique(mnist['y_test'])) # num of labels = 10
+    mnist['n_train'] = 60000 # number of training samples
+    mnist['n_test'] = 10000 # number of test samples
+    mnist['input_x'] = 28 # input x-dimension
+    mnist['input_y'] = 28 # input y-dimension
+    mnist['n_input'] = mnist['input_x']*mnist['input_y'] # input dimension
+    mnist['n_output'] = 10 # output dimension, number of labels
+    
+    assert (mnist['x_train'].shape[0] == mnist['n_train']), \
+            "Wrong number of training samples!"
+    assert (mnist['x_test'].shape[0] == mnist['n_test']), \
+            "Wrong number of test samples!"
+    assert (mnist['x_train'].shape[1] == mnist['n_input']), \
+            "Wrong dimension of inputs!"
+    assert (len(np.unique(mnist['y_test'])) == mnist['n_output']), \
+            "Wrong dimension of outputs!"
     
     # print data info
     print("\nMNIST data info")
     print("----------------")
     print("Number of training data : %d" % mnist['n_train'])
     print("Number of test data : %d"  % mnist['n_test'])
-    print("Input data shape : %d" % mnist['n_input'])
+    print("Input data shape : %d x %d = %d" % 
+          (mnist['input_x'], mnist['input_y'], mnist['n_input']))
     print("Output data shape : %d" % mnist['n_output'])
     
     return mnist
+
 
 def parse_params():
     """
@@ -99,6 +113,7 @@ def parse_params():
 
     return params
 
+
 def init_model(mnist, params):
     """
     Initialize neural network model
@@ -125,6 +140,7 @@ def init_model(mnist, params):
     model_grads = copy.deepcopy(model)
     return (model, model_grads)
 
+
 def sigma(z, func):
     """
     Activation functions
@@ -148,6 +164,7 @@ def sigma(z, func):
     else:
         sys.exit("Unsupported function type!")
     return ZZ
+
 
 def d_sigma(z, func):
     """
@@ -173,6 +190,7 @@ def d_sigma(z, func):
         sys.exit("Unsupported function type!")
     return dZZ
 
+
 def softmax_function(z):
     """
     Softmax function
@@ -189,6 +207,7 @@ def softmax_function(z):
     """
     ZZ = np.exp(z)/np.sum(np.exp(z))
     return ZZ
+
 
 def forward(x, model, func):
     """
@@ -217,6 +236,7 @@ def forward(x, model, func):
     U = np.dot(model['C'], H) + model['b2']
     f = softmax_function(U)
     return (Z, H, f)
+
 
 def backprop(x, y, f, Z, H, model, model_grads, func):
     """
@@ -259,6 +279,7 @@ def backprop(x, y, f, Z, H, model, model_grads, func):
     model_grads['b1'] = db1
     model_grads['b2'] = db2        
     return model_grads
+
 
 def plot_predict(x, y, pred):
     """
@@ -345,6 +366,7 @@ def nn_train(model, model_grads, params, mnist):
               ( epochs, total_correct/np.float(mnist['n_train'] ) ) )
         
     return model
+
 
 def nn_test(model, params, mnist):
     """
